@@ -1,0 +1,2 @@
+let g:ale_cpp_clang_options = "-std=c++14 -Wall -I/home/local/intel/compilers_and_libraries_2020.4.304/linux/mpi/intel64/include"
+let g:ale_cpp_gcc_options = "-std=c++14 -Wall -I/home/local/intel/compilers_and_libraries_2020.4.304/linux/mpi/intel64/include"
