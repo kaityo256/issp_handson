@@ -260,3 +260,65 @@ source /home/issp/materiapps/intel/lammps/lammpsvars.sh
 ```
 
 を実行することで`lammps`にパスが通る。
+
+これを物性研で実行してみよう。
+
+```sh
+cd lammps
+python3 generate_config.py
+```
+
+これで`collision.atoms`が作成されるはずである。この状態でインタラクティブキューを起動しよう。
+
+```sh
+salloc -N 1 -n 128 -p i8cpu
+```
+
+ジョブが開始したら、パスを通してから実行する。
+
+```sh
+source /home/issp/materiapps/intel/lammps/lammpsvars.sh
+srun lammps < collision.input 
+```
+
+最初にこんな表示がされるはずだ。
+
+```sh
+LAMMPS (29 Oct 2020)
+  using 1 OpenMP thread(s) per MPI task
+Reading data file ...
+  orthogonal box = (-40.000000 -20.000000 -20.000000) to (40.000000 20.000000 20.000000)
+  8 by 4 by 4 MPI processor grid
+```
+
+これは、1プロセスに対して1スレッドのflat-MPIであり、空間を8x4x4に区切って、それぞれをプロセスに任せることで128プロセスの計算をするよ、という意味だ。
+
+このジョブでは原子数が少ないこともあって並列化による性能向上はあまり見込めないが、大きな系を計算する際には並列化は非常に有効である。
+
+せっかくなのでハイブリッド実行もためそう。こんなジョブスクリプトを用意してある。
+
+```sh
+#!/bin/sh
+
+#SBATCH -p i8cpu
+#SBATCH -N 1
+#SBATCH -n 8
+#SBATCH -c 16
+
+source /home/issp/materiapps/intel/lammps/lammpsvars.sh
+srun lammps < collision.input
+```
+
+これは、8プロセス*16スレッドの並列実行ジョブだ。パスはジョブスクリプトの中で通す必要があることに注意。
+
+実行するとこんな結果が得られるはず。
+
+```txt
+LAMMPS (29 Oct 2020)
+  using 16 OpenMP thread(s) per MPI task
+Reading data file ...
+  orthogonal box = (-40.000000 -20.000000 -20.000000) to (40.000000 20.000000 20.000000)
+  2 by 2 by 2 MPI processor grid
+```
+
+1プロセスあたり16スレッド、空間を2x2x2に分割したことを示している。
