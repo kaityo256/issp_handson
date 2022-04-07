@@ -26,7 +26,7 @@ ssh k000099@ohtaka.issp.u-tokyo.ac.jp -AY
 
 マニュアル類は以下のところにある。
 
-[物性研スパコン各種マニュアル](https://www.issp.u-tokyo.ac.jp/supercom/for-users/documents)
+[物性研スパコン各種マニュアル](https://mdcl.issp.u-tokyo.ac.jp/scc/system/systembinfo/manual)
 
 まず読むべき基本となるマニュアルは「利用の手引き」である。今回のハンズオンではシステムBを用いるので「利用の手引き(システムB編: 日本語)」を読む。パスワード認証がかかっているが、以下のIDとパスワードでアクセスできる。
 
