@@ -479,11 +479,11 @@ This indicates 16 threads per process and a 2 x 2 x 2 spatial decomposition. You
 Use `scp` to transfer files to and from the supercomputer. With `scp`, you can treat a remote file as if it were local by adding the remote server host name and a colon to the file name. For example, if the remote server is `ohtaka.issp.u-tokyo.ac.jp` and the user name is `k000099`, use the following command to copy a file from the local machine to the remote server.
 
 ```sh
-scp filename k000099ohtaka.issp.u-tokyo.ac.jp:remotepath
+scp filename k000099@ohtaka.issp.u-tokyo.ac.jp:remotepath
 ```
 
 Use the following command to copy a file from the remote server to the current local directory.
 
 ```sh
-scp k000099ohtaka.issp.u-tokyo.ac.jp:remotepath/filename .
+scp k000099@ohtaka.issp.u-tokyo.ac.jp:remotepath/filename .
 ```
