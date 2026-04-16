@@ -1,63 +1,63 @@
-# 物性研スパコンハンズオン
+# ISSP Supercomputer Hands-on
 
-## 概要
+## Overview
 
-東京大学物性研究所(以下、物性研)に限らず、スパコンを保有する組織は、目的に合わせて複数のスパコンを持っているのが普通である。物性研は、2021年現在「システムB」と「システムC」と呼ばれる二つのスパコンを運用している。以下、物性研スパコンのシステムBの使い方を外観する。
+Organizations that operate supercomputers usually have multiple systems for different purposes. The Institute for Solid State Physics, The University of Tokyo (ISSP) operates two supercomputers, called "System B" and "System C" as of 2021. This document gives an overview of how to use System B of the ISSP supercomputer.
 
-※本資料は私が研究室向けに独自に作ったもので、物性研公式のものではありません。
+Note: This material was created independently for my laboratory. It is not official ISSP documentation.
 
-## スパコンの基礎
+## Supercomputer Basics
 
-事前に[スパコンの使い方と諸注意](https://www.youtube.com/watch?v=YcsKEyK9G00)を見ておくこと。
+Before starting, watch [How to Use the Supercomputer and Important Notes](https://www.youtube.com/watch?v=YcsKEyK9G00).
 
-## ログイン
+## Login
 
-アカウントは「kXXXXYY」という形になっている。XXXXがプロジェクト番号、YYがプロジェクト中のメンバー番号で、プロジェクトリーダーが「00」、以下登録順に「01」「02」と続く。物性研スパコンのサーバ名は、システムBが「ohtaka」、システムCが「enaga」である。ドメインは「issp.u-tokyo.ac.jp」となる。例えばプロジェクト`k0000`の、アカウント番号`99`番の人がログインするためには
+Accounts have the form `kXXXXYY`. `XXXX` is the project number, and `YY` is the member number in the project. The project leader is `00`, followed by `01`, `02`, and so on in registration order. The server name for ISSP System B is `ohtaka`, and the server name for System C is `enaga`. The domain is `issp.u-tokyo.ac.jp`. For example, a user whose project is `k0000` and whose account number is `99` can log in as follows.
 
 ```sh
 ssh k000099@ohtaka.issp.u-tokyo.ac.jp -AY
 ```
 
-とすれば良い。ここで`-A`オプションはエージェント転送、`-Y`オプションは信頼されたX11の転送であり、それぞれ不要であれば指定しなくてもかまわわない。
+Here, the `-A` option enables agent forwarding, and the `-Y` option enables trusted X11 forwarding. You do not need to specify them if they are unnecessary.
 
-物性研は公開鍵認証方式でのみアクセスできる。アクセスのためには事前に公開鍵を登録しておかなければならない。もし秘密鍵・公開鍵のペアを作成していなければ、まずそのペアを作成する必要がある。詳細については[SSH公開鍵の登録手順](https://scm-web.issp.u-tokyo.ac.jp/scm/UserSupport/ssh-pubkey-regist-flow.html)を参照のこと。
+The ISSP supercomputer can be accessed only through public-key authentication. You must register your public key in advance. If you have not created a private/public key pair, create one first. See [SSH Public Key Registration Procedure](https://scm-web.issp.u-tokyo.ac.jp/scm/UserSupport/ssh-pubkey-regist-flow.html) for details.
 
-## マニュアルの閲覧
+## Reading the Manuals
 
-マニュアル類は以下のところにある。
+The manuals are available here.
 
-[物性研スパコン各種マニュアル](https://mdcl.issp.u-tokyo.ac.jp/scc/system/systembinfo/manual)
+[ISSP Supercomputer Manuals](https://mdcl.issp.u-tokyo.ac.jp/scc/system/systembinfo/manual)
 
-まず読むべき基本となるマニュアルは「利用の手引き」である。今回のハンズオンではシステムBを用いるので「利用の手引き(システムB編: 日本語)」を読む。パスワード認証がかかっているが、以下のIDとパスワードでアクセスできる。
+The basic manual you should read first is the user's guide. This hands-on uses System B, so read "User's Guide (System B: Japanese)." The page is protected by password authentication, and you can access it with the following ID and password.
 
-* ユーザID：物性研スーパーコンピュータシステムのユーザ名
-* パスワード：登録メールアドレスのユーザ名 (@より前の部分)
+* User ID: your ISSP Supercomputer System user name
+* Password: the user-name part of your registered email address (the part before `@`)
 
-以下ではインタラクティブ用のキューしか使わないが、通常のジョブはサイズに応じたキューに投入する。「利用の手引き」には、プログラムのコンパイル方法等に加えて、キュー(パーティション)の情報が書いてあるので、必ず目を通すこと。
+This document uses only the interactive queue, but ordinary jobs should be submitted to a queue appropriate for their size. The user's guide describes queue (partition) information in addition to how to compile programs, so be sure to read it.
 
-他にも利用者講習会(要パスワード)やスパコンの使い方と諸注意などの資料があるので、必要に応じて読むこと。
+There are also materials such as user training sessions (password required) and notes on how to use the supercomputer, so read them as needed.
 
-詳しい言語仕様やライブラリのマニュアルなどは「システム B マニュアル」などにある。こちらはかなり詳細な情報を含むので、最初は読まなくて良い。必要に応じて参照すること。
+Detailed language specifications, library manuals, and similar references are available in documents such as the "System B Manual." These contain quite detailed information, so you do not need to read them at first. Refer to them when necessary.
 
-## コンパイルとジョブの投入
+## Compiling and Submitting Jobs
 
-### ハンズオンリポジトリのクローン
+### Cloning the Hands-on Repository
 
-まずはこのハンズオンのリポジトリをクローンしよう。適当なディレクトリ(例えば`~/github`)で以下を実行せよ。
+First, clone this hands-on repository. Run the following command in a suitable directory, such as `~/github`.
 
 ```sh
 git clone https://github.com/kaityo256/issp_handson.git
 ```
 
-クローンしたら、そのディレクトリに移動しておく。
+After cloning, move into the directory.
 
 ```sh
 cd issp_handson
 ```
 
-### コンパイル
+### Compilation
 
-まずはMPIプログラムをコンパイルしてみよう。ディレクトリ`mpitest`に移動すると、中にMPIのサンプルコード`test.cpp`がある。
+First, compile an MPI program. Move to the `mpitest` directory. It contains an MPI sample code named `test.cpp`.
 
 ```sh
 cd mpitest
@@ -77,15 +77,15 @@ int main(int argc, char **argv) {
 }
 ```
 
-これは全プロセス数と、自分のプロセス番号(ランク)を取得し、それを表示するだけのプログラムだ。
+This program simply obtains the total number of processes and its own process number (rank), then prints them.
 
-このプログラムを実行するためにはコンパイルする必要がある。物性研スパコンにはコンパイラとしてGCC、インテルコンパイラ、AMDのコンパイラが入っている。GCCを使う場合、Cプログラムであれば`gcc`、C++プログラムであれば`g++`を用いてコンパイルする。さて、並列計算をする際にはMPIの使用がほぼ必須である。MPIを使うには、インクルードファイルやライブラリの場所をコンパイラに教えてやらなければならない。それは面倒なので、代わりに設定をよしなにやってくれるプログラム(ラッパー)が用意されていることが多い。物性研スパコンでは、MPIプログラムのコンパイルは`mpicxx`を用いる。
+You need to compile the program before running it. The ISSP supercomputer provides GCC, Intel compilers, and AMD compilers. When using GCC, compile C programs with `gcc` and C++ programs with `g++`. MPI is almost always required for parallel computation. To use MPI, you must tell the compiler where the include files and libraries are. Because doing that manually is troublesome, systems often provide wrapper programs that configure the necessary options automatically. On the ISSP supercomputer, use `mpicxx` to compile MPI programs.
 
 ```sh
 mpicxx test.cpp
 ```
 
-実行可能ファイル`a.out`が作成されるはずである。`mpicxx`が、裏で実際に呼び出しているコンパイラは`--version`を指定するとわかる。
+An executable file named `a.out` should be created. You can check which compiler `mpicxx` actually calls internally by specifying `--version`.
 
 ```sh
 $ mpicxx --version
@@ -95,21 +95,21 @@ This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ```
 
-今回のケースでは、`g++`が呼ばれていることがわかる。ちなみに、インテルコンパイラでMPIプログラムをコンパイルしたい場合は`mpiicc`(Cプログラム)、`mpiicpc`(C++プログラム)を用いる。
+In this case, you can see that `g++` is being called. If you want to compile an MPI program with the Intel compiler, use `mpiicc` for C programs and `mpiicpc` for C++ programs.
 
-さて、先ほど作った実行可能ファイルを実行するためには、ジョブスケジューラに計算資源を割り当ててもらう必要がある。ジョブスケジューラには様々な種類があるが、物性研スパコンシステムBではSlurm、システムCではPBSProが使われており、それぞれコマンドが異なる。
+To run the executable file you just created, you must have computational resources assigned by the job scheduler. There are various job schedulers. ISSP Supercomputer System B uses Slurm, while System C uses PBSPro, so the commands are different.
 
-### インタラクティブジョブ
+### Interactive Jobs
 
-ジョブの実行方法には、インタラクティブジョブとバッチジョブの二通りがある。まずはインタラクティブジョブによりジョブを実行しよう。インタラクティブジョブとは、専用に用意された計算資源をジョブスケジューラに割り当ててもらい、対話的にプログラムを実行するジョブである。物性研システムBには`i8cpu`というインタラクティブキューが用意されている。このキューを利用するには、以下のコマンドを実行する。
+There are two ways to run jobs: interactive jobs and batch jobs. First, run the job as an interactive job. An interactive job is a job where dedicated computational resources are assigned by the job scheduler, and you run programs interactively on those resources. ISSP System B provides an interactive queue named `i8cpu`. To use this queue, run the following command.
 
 ```sh
 salloc -N 1 -n 128 -p i8cpu
 ```
 
-`salloc`が計算資源要求をするためのコマンド、`-N 1`は、要求ノード数(ここでは1ノード)、`-n 128`は利用プロセス数(ここでは128プロセス)、`-p i8cpu`は計算資源(パーティション)の指定で、ここでは`i8cpu`を指定している。
+`salloc` is the command for requesting computational resources. `-N 1` requests the number of nodes, here one node. `-n 128` requests the number of processes, here 128 processes. `-p i8cpu` specifies the computational resource (partition), here `i8cpu`.
 
-実行すると以下のような表示がされる。
+When you run it, you will see output like this.
 
 ```txt
 salloc: Pending job allocation 272941
@@ -118,18 +118,20 @@ salloc: job 272941 has been allocated resources
 salloc: Granted job allocation 272941
 ```
 
-* これはジョブIDとして272941が割り振られ、
-* リソースの割当を待っており(queued and waiting for resources)
-* 計算資源が割り当てられ(has been allocated resources)
-* ジョブの実行が開始された(Granted job allocation)
+This means the following.
 
-という意味だ。混み具合によっては最後の行しか表示されない場合もある。この状態でジョブを実行するには`srun`を用いる。
+* Job ID 272941 was assigned.
+* The job is waiting for resources (queued and waiting for resources).
+* Computational resources have been allocated.
+* The job has started (Granted job allocation).
+
+Depending on how busy the system is, only the last line may be displayed. Use `srun` to run the job in this state.
 
 ```sh
 srun ./a.out
 ```
 
-`srun`は、Slurmで管理されたシステムにおいて並列ジョブを実行するためのコマンドである。このジョブに割り当てられた計算資源を確認し、どのプロセスをどの計算資源に割り振るかを自動的に決定する。このプログラムは全プロセス数のうち、自分のID(ランク)を表示するだけのコードで、実行すると以下のような表示がでる。
+`srun` is a command for running parallel jobs on systems managed by Slurm. It checks the computational resources assigned to the job and automatically determines which process should be assigned to which resource. This program only prints its own ID (rank) among the total number of processes. Running it produces output like this.
 
 ```txt
 012/128
@@ -141,19 +143,19 @@ srun ./a.out
 099/128
 ```
 
-例えば「`099/128`」は、128プロセス中の99番のプロセスだよ、という意味である。なお、実行のたびに表示の順番は異なる。
+For example, `099/128` means "process number 99 out of 128 processes." The order of the output differs each time you run the program.
 
-実行終了したら`exit`によりインタラクティブジョブを抜けること。
+After execution finishes, leave the interactive job by running `exit`.
 
-### バッチジョブ
+### Batch Jobs
 
-インタラクティブジョブは対話的に計算を行うが、これはデバッグや動作確認に用いるためのキューであり、一般の大きな計算はキューに積んで順番待ちをする。この順番待ちの列のことをキュー(Queue)と呼ぶ。プログラムをバッチジョブとして実行するためには、ジョブスケジューラにどんな計算資源を要求するか、どのようにプログラムを実行するのかを教えてやる必要がある。それを記述するのがジョブスクリプトである。ジョブスクリプトは、特殊なコメント欄を持つシェルスクリプトである。例えば、このリポジトリには`test.sh`というジョブスクリプトが用意されている。中身を見てみよう。
+Interactive jobs run computations interactively, but they are intended for debugging and checking behavior. Large ordinary computations should be submitted to a queue and wait their turn. This waiting line is called a queue. To run a program as a batch job, you must tell the job scheduler what computational resources you need and how to run the program. This information is written in a job script. A job script is a shell script with special comment lines. For example, this repository provides a job script named `test.sh`. Let's inspect it.
 
 ```sh
 cat test.sh
 ```
 
-以下のような内容が表示される。
+The following content is displayed.
 
 ```sh
 #!/bin/sh
@@ -165,60 +167,60 @@ cat test.sh
 srun ./a.out
 ```
 
-シェルスクリプトは`#`以後はコメントとして扱われるが、このスクリプトでは全て意味を持っている。
+In a shell script, text after `#` is treated as a comment, but every line in this script has meaning.
 
-最初の`#!`で始まる行はシバン(shebang)と呼ばれ、このスクリプトを処理するシェルを指定する。
+The first line, which begins with `#!`, is called a shebang. It specifies the shell that processes this script.
 
-次行からの`#SBATCH`で始まる行が、ジョブスケジューラ(Slurm)への指示である。それぞれの意味は以下の通り。
+The following lines that begin with `#SBATCH` are instructions to the job scheduler (Slurm). Their meanings are as follows.
 
-* `-p i8cpu` 計算資源(パーティション)の指定で、ここでは`i8cpu`を指定している。
-* `-N 1` 要求ノード数(ここでは1ノード)
-* `-n 128` 利用プロセス数(ここでは128プロセス)
+* `-p i8cpu`: specifies the computational resource (partition), here `i8cpu`.
+* `-N 1`: requests the number of nodes, here one node.
+* `-n 128`: requests the number of processes, here 128 processes.
 
-これらは先程`salloc`にコマンド引数として渡したものと同じものである。コマンド引数として直接情報を渡すこともできるが、後でどんな計算資源を要求したかの情報がファイルに残るようにシェルスクリプトに記述しておいた方がよい。
+These are the same options that were passed directly to `salloc` earlier. You can pass this information directly as command-line arguments, but it is better to write it in a shell script so that the requested computational resources remain recorded in a file.
 
-また、PBSの場合はジョブ投入時のディレクトリが環境変数`PBS_O_WORKDIR`に入っており、コードの実行前に
+In PBS, the directory from which the job was submitted is stored in the environment variable `PBS_O_WORKDIR`, and it is common to run the following before executing code.
 
 ```sh
 cd $PBS_O_WORKDIR
 ```
 
-を実行するのが一般的であるが、Slurmでは自動的に実行時のディレクトリをカレントディレクトリとするためこのコマンドは不要である。
+In Slurm, the current directory is automatically set to the directory from which the job was submitted, so this command is unnecessary.
 
-このシェルスクリプトをジョブとして投入するには`sbatch`コマンドを使う。
+Use the `sbatch` command to submit this shell script as a job.
 
 ```sh
 sbatch test.sh
 ```
 
-ジョブを投入した結果、ジョブIDが割り振られる。ジョブの状態は`squeue`コマンドで知ることができる。
+After submitting the job, a job ID is assigned. You can check the job status with the `squeue` command.
 
 ```sh
 squeue
 ```
 
-例えば以下のような表示がでる。
+For example, you may see output like this.
 
 ```txt
              JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
-            272905     i8cpu  test.sh  k011700  R       0:03      1 c15u01n1 
+            272905     i8cpu  test.sh  k011700  R       0:03      1 c15u01n1
 ```
 
-それぞれの情報の意味は以下の通り。
+The meanings of the fields are as follows.
 
-* ジョブID(JOBID)として272905が割り振られた
-* 計算リソース(PARTITION)は`i8cpu`を要求している
-* シェルスクリプトのファイル名(NAME)は`test.sh`である
-* 状態(status, ST)は実行中(R)である
-* 実行開始からの時間(TIME)は3秒(0:03)
-* 要求ノード数(NODES)は1である
-* 実行ノードリスト(NODELIST)、もしくは待ち状態ならその理由(REASON)
+* Job ID (JOBID) 272905 was assigned.
+* The requested computational resource (PARTITION) is `i8cpu`.
+* The shell script file name (NAME) is `test.sh`.
+* The status (ST) is running (R).
+* The elapsed time since execution started (TIME) is 3 seconds (`0:03`).
+* The requested number of nodes (NODES) is 1.
+* The execution node list (NODELIST), or the reason if the job is waiting (REASON).
 
-実行が終わると、`slurm-ジョブID.out`というファイルが作成される。ここには標準出力が保存されている。今回はジョブIDが272905であるため、`slurm-272905.ou`というファイルができている。lessやcat等で中身を確認せよ。
+When execution finishes, a file named `slurm-jobID.out` is created. Standard output is saved there. In this example, because the job ID is 272905, a file named `slurm-272905.out` is created. Check its contents with `less`, `cat`, or a similar command.
 
-### メール通知
+### Email Notifications
 
-スパコンが混んでいる場合、ジョブの実行には数日以上待たされる。そこで、ジョブが実行開始したり、実行を終了したらメールで通知する機能がある。Slurmではメール通知は`--mail-type`や`--mail-user`で指定する。
+When the supercomputer is busy, you may have to wait several days or longer before a job runs. Slurm provides a feature that sends email notifications when a job starts or finishes. Specify email notifications with `--mail-type` and `--mail-user`.
 
 ```sh
 #!/bin/sh
@@ -232,28 +234,28 @@ squeue
 srun ./a.out
 ```
 
-`test_mail.sh`をvimで開き、上記の`your@mail.address`を自身のアドレスに変えてから
+Open `test_mail.sh` in vim, replace `your@mail.address` above with your own address, and then run the following.
 
 ```sh
 sbatch test_mail.sh
 ```
 
-を実行せよ。ジョブの開始時に`root@sched1.ohtaka.issp.u-tokyo.ac.jp`というアドレスからメール通知が飛んでくるはずである。
+When the job starts, you should receive an email notification from `root@sched1.ohtaka.issp.u-tokyo.ac.jp`.
 
-## スレッド並列やハイブリッド並列
+## Thread Parallelism and Hybrid Parallelism
 
-### スレッド並列
+### Thread Parallelism
 
-並列化には大きく分けてプロセス並列、スレッド並列、データ並列がある。プロセス並列はMPIというライブラリで、スレッド並列はOpenMPというディレクティブで、データ並列は組み込み関数で実装するのが一般的だ。先程はMPIでプロセス並列を試したので、次はスレッド並列を試してみよう。OpenMPを使うには、コンパイラにそれを教えてやる必要がある。`g++`なら`-fopenmp`、インテルコンパイラ`icpc`なら`-qopenmp`である。ここではインテルコンパイラを使おう。
+Parallelization can be broadly classified into process parallelism, thread parallelism, and data parallelism. Process parallelism is commonly implemented with the MPI library, thread parallelism with OpenMP directives, and data parallelism with intrinsic functions. Earlier, we tried process parallelism with MPI. Next, let's try thread parallelism. To use OpenMP, you need to tell the compiler to enable it. Use `-fopenmp` with `g++`, and `-qopenmp` with the Intel compiler `icpc`. Here, use the Intel compiler.
 
-まず、先ほどの`mpitest`ディレクトリから出て、`threadtest`ディレクトリに入る。
+First, leave the earlier `mpitest` directory and enter the `threadtest` directory.
 
 ```sh
 cd ..
 cd threadtest
 ```
 
-その中にあるスレッド並列のサンプルコード`test.cpp`がある。
+It contains a thread-parallel sample code named `test.cpp`.
 
 ```cpp
 #include <cstdio>
@@ -269,22 +271,22 @@ int main() {
 }
 ```
 
-最初にスレッド数を取得し、スレッドの数だけループを回すが、ループの中身をそれぞれ別スレッドに割り当てるコードである。
+This code first obtains the number of threads, then loops that many times while assigning loop iterations to separate threads.
 
-それをコンパイルしてみよう。
+Compile it.
 
 ```sh
 icpc -qopenmp test.cpp
 ```
 
-そのまま実行してみよう。
+Run it as is.
 
 ```sh
-$ ./a.out 
+$ ./a.out
 000/001
 ```
 
-スレッドが1つ作成され、スレッドID0番からの出力がなされた。スレッド数を変更するには環境変数`OMP_NUM_THREADS`を指定する。
+One thread is created, and output is printed from thread ID 0. To change the number of threads, specify the `OMP_NUM_THREADS` environment variable.
 
 ```sh
 $ OMP_NUM_THREADS=4 ./a.out
@@ -294,9 +296,9 @@ $ OMP_NUM_THREADS=4 ./a.out
 002/004
 ```
 
-4スレッド起動したことがわかる。ログインノードであまりスレッドを立ち上げると迷惑になるのでこれくらいにしておこう。
+You can see that four threads were started. Starting too many threads on the login node is disruptive, so stop around this point.
 
-これをジョブスケジューラにバッチジョブとして投げるには、「プロセス数」に加えて「プロセスあたりのスレッド数」も指定してやる必要がある。ジョブスクリプトはこんな感じになる。
+To submit this as a batch job to the job scheduler, you must specify not only the number of processes but also the number of threads per process. The job script looks like this.
 
 ```sh
 cat test.sh
@@ -313,13 +315,13 @@ cat test.sh
 srun ./a.out
 ```
 
-ジョブの投入は先程と同様である。
+Submit the job in the same way as before.
 
 ```sh
 sbatch test.sh
 ```
 
-実行すると、`slurm-275559.out`のようなファイルが作成される。中身は例えば以下のようになる。
+When it runs, a file such as `slurm-275559.out` is created. Its contents will look like this, for example.
 
 ```txt
 012/128
@@ -331,21 +333,20 @@ sbatch test.sh
 117/128
 ```
 
-意味はMPIの場合と同様で、全スレッド数と自分のスレッド番号が表示されている。
+As in the MPI example, this output shows the total number of threads and each thread's own thread number.
 
-### ハイブリッド並列
+### Hybrid Parallelism
 
-SIMDはさておくと、計算科学における並列計算とは複数のCPUコアを同時につかう計算のことである。この時、使うCPUの数と同じ数のプロセスを立ち上げるのをflat-MPIと呼び、CPUの数より少ないプロセスを立ち上げ、それぞれのプロセスに複数のスレッドを起動する並列をハイブリッド並列と呼ぶ。
+Leaving SIMD aside, parallel computation in computational science means computation that uses multiple CPU cores simultaneously. Starting the same number of processes as CPU cores is called flat MPI. Starting fewer processes than CPU cores and launching multiple threads in each process is called hybrid parallelism.
 
-
-ハイブリッド並列のサンプルコードは`hybrid`ディレクトリに入っている。
+The sample code for hybrid parallelism is in the `hybrid` directory.
 
 ```sh
 cd ..
 cd hybrid
 ```
 
-こんなプログラムだ。
+The program looks like this.
 
 ```cpp
 #include <cstdio>
@@ -367,16 +368,16 @@ int main(int argc, char **argv) {
 }
 ```
 
-詳細は説明しないが、MPIとOpenMPの両方が使われている。
+The details are omitted here, but both MPI and OpenMP are used.
 
-さて、物性研システムBは1ノードに64コアのCPUが2ソケットあるため、全体で128並列まで実行できる。これを8プロセス*16スレッドで実行してみよう。MPIプログラムのコンパイルなので`mpicxx`を使い、裏がGCCなのでオプションとして`-fopenmp`を渡す。
+ISSP System B has two sockets of 64-core CPUs per node, so it can run up to 128-way parallel jobs on one node. Let's run this as 8 processes times 16 threads. Because this is an MPI program, use `mpicxx`; because the underlying compiler is GCC, pass `-fopenmp` as an option.
 
 ```sh
 mpicxx -fopenmp test.cpp
 sbatch test.sh
 ```
 
-できたファイル`slurm-XXXXX.out`をsortコマンドで表示してみよう。
+Display the generated `slurm-XXXXX.out` file with the `sort` command.
 
 ```sh
 $ sort slurm-272988.out
@@ -391,47 +392,47 @@ Thread:015/016 Process:006/008
 Thread:015/016 Process:007/008
 ```
 
-プロセスが8個、それぞれのプロセスにおいてスレッドが16個起動していることがわかるであろう。
+You can see that eight processes were launched, and each process launched 16 threads.
 
-## LAMMPSの利用
+## Using LAMMPS
 
-システムBではビルド済みのアプリケーションが多数インストールされている。インストール済みアプリケーションの一覧は「[インストール済みアプリケーション](https://www.issp.u-tokyo.ac.jp/supercom/visitor/applications)」を参照のこと。
+Many prebuilt applications are installed on System B. See [Installed Applications](https://www.issp.u-tokyo.ac.jp/supercom/visitor/applications) for the list of installed applications.
 
-アプリケーションを利用するには、それぞれのディレクトリにある アプリケーション名vars.shを実行する。LAMMPSであれば、
+To use an application, run the `application-namevars.sh` script in its directory. For LAMMPS, run the following.
 
 ```sh
 source /home/issp/materiapps/intel/lammps/lammpsvars.sh
 ```
 
-を実行することで`lammps`にパスが通る。
+This adds `lammps` to your path.
 
-これを物性研で実行してみよう。LAMMPSを使うサンプルコードは`lammps`ディレクトリにある。
+Let's run this on the ISSP supercomputer. The sample code that uses LAMMPS is in the `lammps` directory.
 
 ```sh
 cd ..
 cd lammps
 ```
 
-まずは原子の座標ファイルを生成しよう。
+First, generate an atom coordinate file.
 
 ```sh
 python3 generate_config.py
 ```
 
-これで`collision.atoms`が作成されるはずである。この状態でインタラクティブキューを起動しよう。
+This should create `collision.atoms`. In this state, start the interactive queue.
 
 ```sh
 salloc -N 1 -n 128 -p i8cpu
 ```
 
-ジョブが開始したら、パスを通してから実行する。
+After the job starts, set the path and run LAMMPS.
 
 ```sh
 source /home/issp/materiapps/intel/lammps/lammpsvars.sh
-srun lammps < collision.input 
+srun lammps < collision.input
 ```
 
-最初にこんな表示がされるはずだ。
+You should first see output like this.
 
 ```sh
 LAMMPS (29 Oct 2020)
@@ -441,11 +442,11 @@ Reading data file ...
   8 by 4 by 4 MPI processor grid
 ```
 
-これは、1プロセスに対して1スレッドのflat-MPIであり、空間を8x4x4に区切って、それぞれをプロセスに任せることで128プロセスの計算をするよ、という意味だ。
+This means that flat MPI is being used with one thread per process, and that the space is divided into 8 x 4 x 4 subdomains, each handled by a process, for a total of 128 processes.
 
-このジョブでは原子数が少ないこともあって並列化による性能向上はあまり見込めないが、大きな系を計算する際には並列化は非常に有効である。
+Because this job has only a small number of atoms, a large performance improvement from parallelization cannot be expected. For large systems, however, parallelization is very effective.
 
-せっかくなのでハイブリッド実行もためそう。こんなジョブスクリプトを用意してある。
+Since we are here, let's also try hybrid execution. The following job script is provided.
 
 ```sh
 #!/bin/sh
@@ -459,9 +460,9 @@ source /home/issp/materiapps/intel/lammps/lammpsvars.sh
 srun lammps < collision.input
 ```
 
-これは、8プロセス*16スレッドの並列実行ジョブだ。パスはジョブスクリプトの中で通す必要があることに注意。
+This is a parallel execution job with 8 processes times 16 threads. Note that the path must be set inside the job script.
 
-実行するとこんな結果が得られるはずだ。
+Running it should produce output like this.
 
 ```txt
 LAMMPS (29 Oct 2020)
@@ -471,20 +472,18 @@ Reading data file ...
   2 by 2 by 2 MPI processor grid
 ```
 
-これは1プロセスあたり16スレッド、空間を2x2x2に分割したことを示しており、確かにプロセス/スレッドのハイブリッド並列が行われたことがわかる。
+This indicates 16 threads per process and a 2 x 2 x 2 spatial decomposition. You can confirm that process/thread hybrid parallelism was indeed used.
 
-## ファイルのやりとり
+## Transferring Files
 
-スパコンとのファイルのやりとりは、`scp`を使う。scpはファイル名にリモートサーバのホスト名とコロンをつけることで、リモートにあるファイルをローカルにあるかのように扱うことができる。例えばリモートサーバが`ohtaka.issp.u-tokyo.ac.jp`、ユーザ名が`k000099`である時に、ローカルからリモートにファイルをコピーしたい場合は
+Use `scp` to transfer files to and from the supercomputer. With `scp`, you can treat a remote file as if it were local by adding the remote server host name and a colon to the file name. For example, if the remote server is `ohtaka.issp.u-tokyo.ac.jp` and the user name is `k000099`, use the following command to copy a file from the local machine to the remote server.
 
 ```sh
 scp filename k000099ohtaka.issp.u-tokyo.ac.jp:remotepath
 ```
 
-リモートからローカルのカレントディレクトリにファイルをコピーしたい場合は
+Use the following command to copy a file from the remote server to the current local directory.
 
 ```sh
 scp k000099ohtaka.issp.u-tokyo.ac.jp:remotepath/filename .
 ```
-
-とする。
