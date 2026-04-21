@@ -511,15 +511,15 @@ python3 makeseed.py
 
 ```sh
 $ cat task.sh
-python pi.py < seed000.dat > result000.dat
-python pi.py < seed001.dat > result001.dat
-python pi.py < seed002.dat > result002.dat
-python pi.py < seed003.dat > result003.dat
+python3 pi.py < seed000.dat > result000.dat
+python3 pi.py < seed001.dat > result001.dat
+python3 pi.py < seed002.dat > result002.dat
+python3 pi.py < seed003.dat > result003.dat
 (snip)
-python pi.py < seed123.dat > result123.dat
-python pi.py < seed124.dat > result124.dat
-python pi.py < seed125.dat > result125.dat
-python pi.py < seed126.dat > result126.dat
+python3 pi.py < seed123.dat > result123.dat
+python3 pi.py < seed124.dat > result124.dat
+python3 pi.py < seed125.dat > result125.dat
+python3 pi.py < seed126.dat > result126.dat
 ```
 
 127行のコマンドが並んでいる。まずはこれをインタラクティブキューで実行してみよう。
@@ -534,10 +534,44 @@ salloc -N 1 -n 128 -p i8cpu
 srun ~/github/cps/cps task.sh
 ```
 
+実行に一分ほどかかる。終了したら`exit`によりインタラクティブキューを抜けよう。
 
+```sh
+[k011700@c15u01n4 pi]$ exit
+exit
+salloc: Relinquishing job allocation 2881922
+[k011700@ohtaka1 pi]$ 
+```
 
+上記のように、`k011700@c15u01n4`のアットマークの右側が`ohtaka1`になっていればログインノードに戻っている。
 
-カレントディレクトリにはジョブスクリプト`test.sh`がある。
+CPSは実行するとログを出力する。見てみよう。
+
+```sh
+cat cps.log
+```
+
+以下のような内容になるはずだ。
+
+```txt
+Number of tasks : 127
+Number of processes : 128
+Total execution time: 364.317 [s]
+Elapsed time: 3.215 [s]
+Parallel Efficiency : 0.892267
+
+Task list:
+Command : Elapsed time
+python3 pi.py < seed000.dat > result000.dat : 2.914 [s]
+python3 pi.py < seed001.dat > result001.dat : 2.776 [s]
+(snip)
+python3 pi.py < seed125.dat > result125.dat : 2.724 [s]
+python3 pi.py < seed126.dat > result126.dat : 2.772 [s]
+```
+
+128プロセスで127本のタスクを実行をしたこと、全体の計算時間が364.317秒であり、実時間が3.215秒であったこと、並列化効率が89%であったことがわかる。
+
+実際にはより長いジョブをバッチジョブとして投入する。やってみよう。カレントディレクトリにジョブスクリプト`pi.sh`がある。
 
 ```sh
 #!/bin/bash
@@ -549,6 +583,36 @@ srun ~/github/cps/cps task.sh
 ```
 
 これを投入しよう。
+
+```sh
+sbatch pi.sh
+```
+
+ジョブの状態は`squeue`で見ることができる。
+
+```sh
+$ squeue
+             JOBID PARTITION     NAME     USER ST       TIME  NODES START_TIME
+           2881932     i8cpu    pi.sh  k011700  R       0:17      1 2026-04-21T18:20:38
+```
+
+squeueで何も表示されなくなったらジョブが終わっている。
+
+```sh
+$ squeue
+             JOBID PARTITION     NAME     USER ST       TIME  NODES START_TIME
+```
+
+また`cps.log`を見て、正しく計算できることを確認しておこう。
+
+全ての結果をまとめる`average.py`も用意してある。実行してみよう。
+
+```sh
+$ python3 average.py 
+3.1415636850393702 +- 0.0007268837763111493
+```
+
+高い精度で円周率が求められたはずである。
 
 ## ファイルのやりとり
 
