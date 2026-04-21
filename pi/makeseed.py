@@ -11,4 +11,4 @@ with open("task.sh", "w") as f:
     for i in range(N):
         filename = f"seed{i:03d}.dat"
         result = f"result{i:03d}.dat"
-        f.write(f"python pi.py < {filename} > {result}\n")
+        f.write(f"python3 pi.py < {filename} > {result}\n")

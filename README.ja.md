@@ -525,8 +525,15 @@ python pi.py < seed126.dat > result126.dat
 127行のコマンドが並んでいる。まずはこれをインタラクティブキューで実行してみよう。
 
 ```sh
-
+salloc -N 1 -n 128 -p i8cpu
 ```
+
+`salloc: Granted job allocation 2881918`などと表示されてコマンドプロンプトが表示されたらインタラクティブキューが開始されている。そこで以下のコマンドを実行する。
+
+```sh
+srun ~/github/cps/cps task.sh
+```
+
 
 
 
