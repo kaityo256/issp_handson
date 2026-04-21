@@ -112,18 +112,30 @@ salloc -N 1 -n 128 -p i8cpu
 実行すると以下のような表示がされる。
 
 ```txt
-salloc: Pending job allocation 272941
-salloc: job 272941 queued and waiting for resources
-salloc: job 272941 has been allocated resources
-salloc: Granted job allocation 272941
+salloc: Pending job allocation 2881940
+salloc: job 2881940 queued and waiting for resources
+salloc: job 2881940 has been allocated resources
+salloc: Granted job allocation 2881940
 ```
 
-* これはジョブIDとして272941が割り振られ、
+* これはジョブIDとして2881940が割り振られ、
 * リソースの割当を待っており(queued and waiting for resources)
 * 計算資源が割り当てられ(has been allocated resources)
 * ジョブの実行が開始された(Granted job allocation)
 
-という意味だ。混み具合によっては最後の行しか表示されない場合もある。この状態でジョブを実行するには`srun`を用いる。
+という意味だ。混み具合によっては最後の行しか表示されない場合もある。
+
+インタラクティブキューが始まると、プロンプトが変化する。
+
+```sh
+[k011700@ohtaka1 ~]$ salloc -N 1 -n 128 -p i8cpu
+salloc: Granted job allocation 2881940
+[k011700@c15u01n4 ~]$ 
+```
+
+上記では、ログインノード(`ohtaka1`)から、インタラクティブキュー用に割り当てられた計算ノード`c15u01n4`に場所が移った。どのノードが割り当てられるかは毎回異なる。
+
+この状態でジョブを実行するには`srun`を用いる。
 
 ```sh
 srun ./a.out
@@ -143,7 +155,14 @@ srun ./a.out
 
 例えば「`099/128`」は、128プロセス中の99番のプロセスだよ、という意味である。なお、実行のたびに表示の順番は異なる。
 
-実行終了したら`exit`によりインタラクティブジョブを抜けること。
+実行終了したら`exit`によりインタラクティブジョブを抜けること。以下のようにプロンプトが変わり、ログインノードに戻ってきたことがわかる。
+
+```sh
+[k011700@c15u01n4 ~]$ exit
+exit
+salloc: Relinquishing job allocation 2881940
+[k011700@ohtaka1 ~]$ 
+```
 
 ### バッチジョブ
 
@@ -227,12 +246,12 @@ squeue
 #SBATCH -N 1
 #SBATCH -n 128
 #SBATCH --mail-type=BEGIN
-#SBATCH --mail-user=your@mail.address
+#SBATCH --mail-user=your@example.com
 
 srun ./a.out
 ```
 
-`test_mail.sh`をvimで開き、上記の`your@mail.address`を自身のアドレスに変えてから
+`test_mail.sh`をvimで開き、上記の`your@example.com`を自身のアドレスに変えてから
 
 ```sh
 sbatch test_mail.sh
@@ -475,7 +494,7 @@ Reading data file ...
 
 ## CPSの利用
 
-パラメータファイルを多数用意して自明並列を行う場合、CPSを用いるのが便利だ。まずはCPSをクローンしよう。
+パラメータファイルを多数用意して自明並列を行う場合、[CPS](https://github.com/kaityo256/cps)を用いるのが便利だ。まずはCPSをクローンしよう。
 
 ```sh
 cd
