@@ -473,6 +473,76 @@ Reading data file ...
 
 これは1プロセスあたり16スレッド、空間を2x2x2に分割したことを示しており、確かにプロセス/スレッドのハイブリッド並列が行われたことがわかる。
 
+## CPSの利用
+
+パラメータファイルを多数用意して自明並列を行う場合、CPSを用いるのが便利だ。まずはCPSをクローンしよう。
+
+```sh
+cd
+cd github
+git clone https://github.com/kaityo256/cps.git
+```
+
+クローンしたら、ビルドしておく。
+
+```sh
+cd cps
+make
+```
+
+カレントディレクトリに実行バイナリ`cps`ができたら完了である。
+
+ハンズオンのディレクトリに戻ろう。
+
+```sh
+cd
+cd github
+cd issp_handson
+cd pi
+```
+
+ここには、円周率を計算するためのスクリプトがある。まずは乱数の種を作成しよう。
+
+```sh
+python3 makeseed.py
+```
+
+カレントディレクトリに`seed000.dat`から`seed0126.dat`、さらに`task.sh`が作成されたはずだ。`task.sh`を見てみよう。
+
+```sh
+$ cat task.sh
+python pi.py < seed000.dat > result000.dat
+python pi.py < seed001.dat > result001.dat
+python pi.py < seed002.dat > result002.dat
+python pi.py < seed003.dat > result003.dat
+(snip)
+python pi.py < seed123.dat > result123.dat
+python pi.py < seed124.dat > result124.dat
+python pi.py < seed125.dat > result125.dat
+python pi.py < seed126.dat > result126.dat
+```
+
+127行のコマンドが並んでいる。まずはこれをインタラクティブキューで実行してみよう。
+
+```sh
+
+```
+
+
+
+カレントディレクトリにはジョブスクリプト`test.sh`がある。
+
+```sh
+#!/bin/bash
+#SBATCH -p i8cpu
+#SBATCH -N 1
+#SBATCH -n 128
+
+srun ~/github/cps/cps task.sh
+```
+
+これを投入しよう。
+
 ## ファイルのやりとり
 
 スパコンとのファイルのやりとりは、`scp`を使う。scpはファイル名にリモートサーバのホスト名とコロンをつけることで、リモートにあるファイルをローカルにあるかのように扱うことができる。例えばリモートサーバが`ohtaka.issp.u-tokyo.ac.jp`、ユーザ名が`k000099`である時に、ローカルからリモートにファイルをコピーしたい場合は
