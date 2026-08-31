@@ -12,7 +12,7 @@ Before starting, watch [How to Use the Supercomputer and Important Notes](https:
 
 ## Login
 
-Accounts have the form `kXXXXYY`. `XXXX` is the project number, and `YY` is the member number in the project. The project leader is `00`, followed by `01`, `02`, and so on in registration order. The server name for ISSP System B is `ohtaka`, and the server name for System C is `enaga`. The domain is `issp.u-tokyo.ac.jp`. For example, a user whose project is `k0000` and whose account number is `99` can log in as follows.
+Accounts have the form `kXXXXYY`. `XXXX` is the project number, and `YY` is the member number in the project. The project leader is `00`, followed by `01`, `02`, and so on in registration order. The server name for ISSP System B is `ohtaka`, and the server name for System C is `kugui`. The domain is `issp.u-tokyo.ac.jp`. For example, a user whose project is `k0000` and whose account number is `99` can log in as follows.
 
 ```sh
 ssh k000099@ohtaka.issp.u-tokyo.ac.jp -AY
@@ -30,8 +30,8 @@ The manuals are available here.
 
 The basic manual you should read first is the user's guide. This hands-on uses System B, so read "User's Guide (System B: Japanese)." The page is protected by password authentication, and you can access it with the following ID and password.
 
-* User ID: your ISSP Supercomputer System user name
-* Password: the user-name part of your registered email address (the part before `@`)
+- User ID: your ISSP Supercomputer System user name
+- Password: the user-name part of your registered email address (the part before `@`)
 
 This document uses only the interactive queue, but ordinary jobs should be submitted to a queue appropriate for their size. The user's guide describes queue (partition) information in addition to how to compile programs, so be sure to read it.
 
@@ -120,10 +120,10 @@ salloc: Granted job allocation 272941
 
 This means the following.
 
-* Job ID 272941 was assigned.
-* The job is waiting for resources (queued and waiting for resources).
-* Computational resources have been allocated.
-* The job has started (Granted job allocation).
+- Job ID 272941 was assigned.
+- The job is waiting for resources (queued and waiting for resources).
+- Computational resources have been allocated.
+- The job has started (Granted job allocation).
 
 Depending on how busy the system is, only the last line may be displayed. Use `srun` to run the job in this state.
 
@@ -173,9 +173,9 @@ The first line, which begins with `#!`, is called a shebang. It specifies the sh
 
 The following lines that begin with `#SBATCH` are instructions to the job scheduler (Slurm). Their meanings are as follows.
 
-* `-p i8cpu`: specifies the computational resource (partition), here `i8cpu`.
-* `-N 1`: requests the number of nodes, here one node.
-* `-n 128`: requests the number of processes, here 128 processes.
+- `-p i8cpu`: specifies the computational resource (partition), here `i8cpu`.
+- `-N 1`: requests the number of nodes, here one node.
+- `-n 128`: requests the number of processes, here 128 processes.
 
 These are the same options that were passed directly to `salloc` earlier. You can pass this information directly as command-line arguments, but it is better to write it in a shell script so that the requested computational resources remain recorded in a file.
 
@@ -208,13 +208,13 @@ For example, you may see output like this.
 
 The meanings of the fields are as follows.
 
-* Job ID (JOBID) 272905 was assigned.
-* The requested computational resource (PARTITION) is `i8cpu`.
-* The shell script file name (NAME) is `test.sh`.
-* The status (ST) is running (R).
-* The elapsed time since execution started (TIME) is 3 seconds (`0:03`).
-* The requested number of nodes (NODES) is 1.
-* The execution node list (NODELIST), or the reason if the job is waiting (REASON).
+- Job ID (JOBID) 272905 was assigned.
+- The requested computational resource (PARTITION) is `i8cpu`.
+- The shell script file name (NAME) is `test.sh`.
+- The status (ST) is running (R).
+- The elapsed time since execution started (TIME) is 3 seconds (`0:03`).
+- The requested number of nodes (NODES) is 1.
+- The execution node list (NODELIST), or the reason if the job is waiting (REASON).
 
 When execution finishes, a file named `slurm-jobID.out` is created. Standard output is saved there. In this example, because the job ID is 272905, a file named `slurm-272905.out` is created. Check its contents with `less`, `cat`, or a similar command.
 
